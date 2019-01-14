@@ -22,6 +22,9 @@ class ViewController: UIViewController {
             sender.setProgress(to: 1, withAnimation: true)
             stateLabel.text = "Downloading"
         case .downloading:
+            sender.downloadState = .processing
+            stateLabel.text = "Processing"
+        case .processing:
             sender.resetProgress()
             sender.downloadState = .complete
             stateLabel.text = "Download Complete"

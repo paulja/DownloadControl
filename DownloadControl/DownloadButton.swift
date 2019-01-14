@@ -23,6 +23,7 @@ final class DownloadButton: UIButton {
         case ready
         case queued
         case downloading
+        case processing
         case complete
     }
 
@@ -93,6 +94,8 @@ final class DownloadButton: UIButton {
     // MARK: - Private Methods -
 
     private func setupView() {
+        self.subviews.forEach { $0.removeFromSuperview() }
+
         self.layer.sublayers = nil
         self.backgroundLayer.frame = self.bounds
         self.foregroundLayer.frame = self.bounds
@@ -146,6 +149,8 @@ final class DownloadButton: UIButton {
                 center: self.pathCenter,
                 radius: self.radius,
                 lineWidth: self.lineWidth)
+        case .processing:
+            drawProcessingState(parent: self, tint: self.tintColor)
         case .complete:
             drawCompleteState(background: self.backgroundLayer, tint: self.tintColor)
         }
@@ -173,6 +178,10 @@ final class DownloadButton: UIButton {
 
         drawSquare(to: background, with: tint, center: center, radius: rad)
         drawCircle(to: background, with: tint, center: center, radius: rad, lineWidth: width)
+    }
+
+    private func drawProcessingState(parent view: UIView, tint: UIColor) {
+        drawActivityView(parent: view, with: tint)
     }
 
     private func drawCompleteState(background: CALayer, tint: UIColor) {
@@ -231,5 +240,15 @@ final class DownloadButton: UIButton {
         stopLayer.fillColor = tint.cgColor
 
         layer.addSublayer(stopLayer)
+    }
+
+    private func drawActivityView(parent: UIView, with: UIColor) {
+        let activity = UIActivityIndicatorView(frame: parent.bounds)
+        activity.color = with
+        activity.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+        activity.isUserInteractionEnabled = false // stop the control eating touch events
+        activity.startAnimating()
+
+        parent.addSubview(activity)
     }
 }
